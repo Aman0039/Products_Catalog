@@ -4,7 +4,7 @@ import { fetchProducts } from "../data";
 
 const ProductCard = lazy(() => import("../components/ProductCard"));
 
-export default function Catalog() {
+const Catalog = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true); // true for initial load only
 
@@ -55,3 +55,5 @@ export default function Catalog() {
     </div>
   );
 }
+
+export default Catalog;
