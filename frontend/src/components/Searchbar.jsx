@@ -3,91 +3,64 @@ import { HiSearch } from "react-icons/hi";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-export default function Searchbar({ items = [], onSearch }) {
+const Searchbar = ({ onSearch }) => {
   const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [open, setOpen] = useState(false);
-
   const navigate = useNavigate();
 
   const inputRef = useRef(null);
   const debounceTimer = useRef(null);
-  const suppressSuggestionsRef = useRef(false);
 
-  /* ---------- Suggestions (typing only) ---------- */
-  useEffect(() => {
-    const q = query.trim().toLowerCase();
-
-    if (!q) {
-      setSuggestions([]);
-      setOpen(false);
-      return;
-    }
-
-    if (suppressSuggestionsRef.current) {
-      suppressSuggestionsRef.current = false;
-      setSuggestions([]);
-      setOpen(false);
-      return;
-    }
-
-    const next = items
-      .map(p => p.title ?? p.name)
-      .filter(Boolean)
-      .filter(v => v.toLowerCase().includes(q))
-      .slice(0, 8);
-
-    setSuggestions(next);
-    setOpen(next.length >= 0);
-  }, [query, items]);
-
-  /* ---------- Debounced search (typing only) ---------- */
+  /* ---------- Debounced backend search ---------- */
   useEffect(() => {
     const q = query.trim();
-    if (!q) return;
 
     clearTimeout(debounceTimer.current);
+
     debounceTimer.current = setTimeout(() => {
+      // 🔥 CASE 1: empty input → fetch all products
+      if (!q) {
+        onSearch?.("");
+        navigate("/api/v1/products", { replace: true });
+        return;
+      }
+
+      // 🔥 CASE 2: search using backend metadata
       onSearch?.(q);
-      navigate(`/search?q=${encodeURIComponent(q)}`, { replace: true });
-    }, 700);
+      navigate(`/api/v1/products?search=${q}`, { replace: true });
+    }, 300);
 
     return () => clearTimeout(debounceTimer.current);
   }, [query, onSearch, navigate]);
 
-  /* ---------- Immediate search (click / submit) ---------- */
+  /* ---------- Immediate search (Enter / icon click) ---------- */
   const runSearchNow = useCallback(
     (value) => {
       clearTimeout(debounceTimer.current);
-      setOpen(false);
-      onSearch?.(value);
-      navigate(`/search?q=${encodeURIComponent(value)}`);
+
+      const q = value.trim();
+
+      if (!q) {
+        onSearch?.("");
+        navigate("/api/v1/products", { replace: true });
+        return;
+      }
+
+      onSearch?.(q);
+      navigate(`/api/v1/products?search=${q}`, { replace: true });
     },
     [onSearch, navigate]
   );
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const q = query.trim();
-    if (!q) return;
-
-    suppressSuggestionsRef.current = true;
-    runSearchNow(q);
-  };
-
-  const handleSelect = (value) => {
-    suppressSuggestionsRef.current = true;
-    setQuery(value);
-    runSearchNow(value);
+    runSearchNow(query);
   };
 
   const handleClear = () => {
     clearTimeout(debounceTimer.current);
     setQuery("");
-    setSuggestions([]);
-    setOpen(false);
     onSearch?.("");
-    navigate("/search", { replace: true });
+    navigate("/api/v1/products", { replace: true });
     inputRef.current?.focus();
   };
 
@@ -110,9 +83,7 @@ export default function Searchbar({ items = [], onSearch }) {
           ref={inputRef}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => suggestions.length && setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 120)}
-          placeholder="Search products, brands or categories..."
+          placeholder="Search products or categories..."
           className="flex-1 bg-transparent outline-none text-gray-800 px-2"
         />
 
@@ -126,24 +97,9 @@ export default function Searchbar({ items = [], onSearch }) {
             <IoCloseCircleOutline className="w-5 h-5" />
           </button>
         )}
-
-        {open && (
-          <ul className="absolute left-2 right-2 top-full mt-2 bg-white rounded-xl shadow-xl z-50 overflow-hidden">
-            {suggestions.map((item, i) => (
-              <li
-                key={item + i}
-                onMouseDown={() => {
-                  suppressSuggestionsRef.current = true;
-                }}
-                onClick={() => handleSelect(item)}
-                className="px-4 py-3 hover:bg-gray-100 cursor-pointer text-sm"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-        )}
       </form>
     </div>
   );
-}
+};
+
+export default Searchbar;

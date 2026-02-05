@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export default function LazyItem({ children }) {
+const LazyItem = ({ children }) => {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
@@ -22,3 +22,5 @@ export default function LazyItem({ children }) {
 
   return <div ref={ref}>{visible ? children : null}</div>;
 }
+
+export default LazyItem;

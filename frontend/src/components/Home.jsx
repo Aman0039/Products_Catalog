@@ -1,5 +1,3 @@
-import Searchbar from './Searchbar'
-import ProductCard from './ProductCard'
 import Footer from './Footer'
 import Catalog from '../pages/Catalog'
 
