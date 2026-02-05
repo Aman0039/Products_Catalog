@@ -1,26 +1,33 @@
-const BASE_URL = "http://localhost:5000/api/v1";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Fetch products from backend
- * @param {string} searchQuery
- * @returns {Promise<Array>} array of product objects
+ * @param searchQuery string
+ * @returns Promise<Array>
  */
 export const fetchProducts = async (searchQuery = "") => {
-  try {
-    const url = searchQuery
-      ? `${BASE_URL}/products?search=${encodeURIComponent(searchQuery)}`
-      : `${BASE_URL}/products`;
+  // Guard against missing env variable
+  if (!BASE_URL) {
+    throw new Error("VITE_API_URL is not defined");
+  }
 
+  const url = searchQuery
+    ? `${BASE_URL}/api/v1/products?search=${encodeURIComponent(searchQuery)}`
+    : `${BASE_URL}/api/v1/products`;
+
+  try {
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error("Failed to fetch products");
+      throw new Error(`Failed to fetch products (${response.status})`);
     }
 
     const data = await response.json();
-    return data; // ✅ array of objects only
-  } catch (error) {
-    console.error("API Error:", error);
-    return []; // fail-safe
+
+    // Always return array
+    return Array.isArray(data) ? data : [];
+  } catch {
+    // Silent fail-safe for production UI
+    return [];
   }
 };
