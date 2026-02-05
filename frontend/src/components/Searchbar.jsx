@@ -20,13 +20,13 @@ const Searchbar = ({ onSearch }) => {
       // 🔥 CASE 1: empty input → fetch all products
       if (!q) {
         onSearch?.("");
-        navigate("api/v1/products", { replace: true });
+        navigate("/api/v1/products", { replace: true });
         return;
       }
 
       // 🔥 CASE 2: search using backend metadata
       onSearch?.(q);
-      navigate(`api/v1/products?search=${q}`, { replace: true });
+      navigate(`/api/v1/products?search=${q}`, { replace: true });
     }, 300);
 
     return () => clearTimeout(debounceTimer.current);
@@ -41,12 +41,12 @@ const Searchbar = ({ onSearch }) => {
 
       if (!q) {
         onSearch?.("");
-        navigate("api/v1/products", { replace: true });
+        navigate("/api/v1/products", { replace: true });
         return;
       }
 
       onSearch?.(q);
-      navigate(`api/v1/products?search=${q}`, { replace: true });
+      navigate(`/api/v1/products?search=${q}`, { replace: true });
     },
     [onSearch, navigate]
   );
@@ -60,7 +60,7 @@ const Searchbar = ({ onSearch }) => {
     clearTimeout(debounceTimer.current);
     setQuery("");
     onSearch?.("");
-    navigate("api/v1/products", { replace: true });
+    navigate("/api/v1/products", { replace: true });
     inputRef.current?.focus();
   };
 

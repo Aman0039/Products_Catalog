@@ -1,17 +1,15 @@
+import { Route, Routes } from 'react-router-dom'
 import Home from './components/Home'
-import { BrowserRouter } from "react-router-dom";
+import NotFound from './components/NotFound'
 
 const App = () => {
   return (
-<BrowserRouter>
-<div className='select-none'>
-  <Routes>
-    <Route path="/" element={<Home />} />
-    <Route path="*" element={<NotFound />} />
-  </Routes>
-</div>
-</BrowserRouter>
-
+    <div className='select-none'>
+      <Home/>
+      <Routes>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
   )
 }
 

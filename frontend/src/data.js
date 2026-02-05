@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Fetch products from backend
@@ -7,13 +7,13 @@ const BASE_URL = import.meta.env.VITE_API_URL;
  */
 export const fetchProducts = async (searchQuery = "") => {
   // Guard against missing env variable
-  if (!BASE_URL) {
+  if (!API_URL) {
     throw new Error("VITE_API_URL is not defined");
   }
 
   const url = searchQuery
-    ? `${BASE_URL}api/v1/products?search=${encodeURIComponent(searchQuery)}`
-    : `${BASE_URL}api/v1/products`;
+    ? `${API_URL}/api/v1/products?search=${encodeURIComponent(searchQuery)}`
+    : `${API_URL}/api/v1/products`;
 
   try {
     const response = await fetch(url);
