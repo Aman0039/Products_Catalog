@@ -81,3 +81,10 @@ npm run start
 cd frontend
 npm install
 npm run dev
+```
+
+### Deployed Link
+
+Server Link : ("https://products-catalog-g1i6.onrender.com/api/v1/products")
+
+Frontend : ("https://productslist-omega.vercel.app/api/v1/products")
