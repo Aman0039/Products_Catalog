@@ -12,8 +12,8 @@ export const fetchProducts = async (searchQuery = "") => {
   }
 
   const url = searchQuery
-    ? `${BASE_URL}/api/v1/products?search=${encodeURIComponent(searchQuery)}`
-    : `${BASE_URL}/api/v1/products`;
+    ? `${BASE_URL}api/v1/products?search=${encodeURIComponent(searchQuery)}`
+    : `${BASE_URL}api/v1/products`;
 
   try {
     const response = await fetch(url);
