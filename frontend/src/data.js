@@ -2,13 +2,14 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Fetch products from backend
- * @param searchQuery string
- * @returns Promise<Array>
+ * @param {string} searchQuery
+ * @returns {Promise<Array>}
  */
 export const fetchProducts = async (searchQuery = "") => {
-  // Guard against missing env variable
+  // Fail-safe: never crash the app
   if (!API_URL) {
-    throw new Error("VITE_API_URL is not defined");
+    console.error("VITE_API_URL is not defined");
+    return [];
   }
 
   const url = searchQuery
@@ -19,15 +20,14 @@ export const fetchProducts = async (searchQuery = "") => {
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch products (${response.status})`);
+      console.error("Fetch failed:", response.status);
+      return [];
     }
 
     const data = await response.json();
-
-    // Always return array
     return Array.isArray(data) ? data : [];
-  } catch {
-    // Silent fail-safe for production UI
+  } catch (error) {
+    console.error("Fetch error:", error);
     return [];
   }
 };
