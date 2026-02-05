@@ -3,11 +3,15 @@ import { BrowserRouter } from "react-router-dom";
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <div className='select-none'>
-        <Home/>
-      </div>
-    </BrowserRouter>
+<BrowserRouter>
+<div className='select-none'>
+  <Routes>
+    <Route path="/" element={<Home />} />
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+</div>
+</BrowserRouter>
+
   )
 }
 
